@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Employee Reimbursement Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Soothing Teal/Mint Palette */
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #5eead4;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            /* Soothing Background - Sage/Mint tinted */
+            --bg: #f0fdfa;
+            --bg-gradient-start: #ccfbf1;
+            --bg-gradient-end: #f0fdfa;
+            
+            /* Cards - Soft warm white */
+            --card: #ffffff;
+            --card-hover: #fafaf9;
+            
+            /* Text - Warm dark slate */
+            --text: #1c1917;
+            --text-secondary: #57534e;
+            --text-muted: #78716c;
+            
+            /* Borders - Soft sage */
+            --border: #d6d3d1;
+            --border-light: #e7e5e4;
+            
+            /* Accents */
+            --accent-teal: #14b8a6;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #f5f5f4 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 40px -10px rgba(13, 148, 136, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(94, 234, 212, 0.15);
+            border-radius: 50%;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 200px;
+            height: 200px;
+            background: rgba(94, 234, 212, 0.1);
+            border-radius: 50%;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header p {
+            opacity: 0.9;
+            font-size: 1.05rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            background: var(--card);
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -4px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-light);
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-tab:hover {
+            background: var(--bg);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+        
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+        
+        /* Panels */
+        .panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -4px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px -4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+        }
+        
+        .stat-card:nth-child(2)::before { background: var(--success); }
+        .stat-card:nth-child(3)::before { background: var(--warning); }
+        .stat-card:nth-child(4)::before { background: var(--danger); }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stat-icon.primary { background: rgba(13, 148, 136, 0.1); }
+        .stat-icon.success { background: rgba(16, 185, 129, 0.1); }
+        .stat-icon.warning { background: rgba(245, 158, 11, 0.1); }
+        .stat-icon.danger { background: rgba(239, 68, 68, 0.1); }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -4px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px -4px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to right, var(--card), var(--bg));
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .card-body {
+            padding: 28px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-light);
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+        }
+        
+        th {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: var(--bg);
+            letter-spacing: 0.05em;
+        }
+        
+        th:first-child { border-radius: 10px 0 0 10px; }
+        th:last-child { border-radius: 0 10px 10px 0; }
+        
+        tr:hover td {
+            background: var(--bg);
+        }
+        
+        td {
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-auto {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge-admin {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: var(--card);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+        
+        /* File Grid */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            background: var(--card);
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px -4px rgba(13, 148, 136, 0.15);
+        }
+        
+        .file-icon {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .alert-success {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            header { padding: 24px; }
+            header h1 { font-size: 1.6rem; }
+            .nav-tabs { flex-wrap: wrap; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Admin Control Panel</h1>
+            <p>Employee Reimbursement Management System</p>
+        </header>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showPanel('dashboard')">
+                <span>📊</span> Dashboard
+            </button>
+            <button class="nav-tab" onclick="showPanel('expenses')">
+                <span>📋</span> Expenses
+            </button>
+            <button class="nav-tab" onclick="showPanel('users')">
+                <span>👥</span> Users
+            </button>
+            <button class="nav-tab" onclick="showPanel('employees')">
+                <span>🧑‍💼</span> Employees
+            </button>
+            <button class="nav-tab" onclick="showPanel('bills')">
+                <span>🧾</span> Bills
+            </button>
+        </div>
+        
+        <!-- Dashboard Panel -->
+        <div id="dashboard-panel" class="panel active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="total-expenses">-</div>
+                            <div class="stat-label">Total Expenses</div>
+                        </div>
+                        <div class="stat-icon primary">📊</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="total-amount">-</div>
+                            <div class="stat-label">Total Amount</div>
+                        </div>
+                        <div class="stat-icon success">💰</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pending-count">-</div>
+                            <div class="stat-label">Pending Approval</div>
+                        </div>
+                        <div class="stat-icon warning">⏳</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pending-bills">-</div>
+                            <div class="stat-label">Pending Bills</div>
+                        </div>
+                        <div class="stat-icon danger">📤</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Activity</h3>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-activity">
+                            <tr><td colspan="5" style="text-align:center;padding:40px;"><div class="loading"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Expenses Panel -->
+        <div id="expenses-panel" class="panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">All Expenses</h3>
+                    <div>
+                        <button class="btn btn-secondary" onclick="filterExpenses('all')">All</button>
+                        <button class="btn btn-secondary" onclick="filterExpenses('pending')">Pending</button>
+                        <button class="btn btn-secondary" onclick="filterExpenses('approved')">Approved</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Employee</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenses-table">
+                            <tr><td colspan="6" style="text-align:center;padding:40px;"><div class="loading"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Users Panel -->
+        <div id="users-panel" class="panel">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Create New User</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="user-form">
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-input" id="user-username" placeholder="johndoe" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" id="user-email" placeholder="john@company.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-input" id="user-password" placeholder="Min 6 characters" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                                    <input type="checkbox" id="user-admin" style="width:18px;height:18px;accent-color:var(--primary);">
+                                    <span>Grant admin privileges</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width:100%;">Create User</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Users</h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table">
+                                <tr><td colspan="3" style="text-align:center;padding:40px;"><div class="loading"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Employees Panel -->
+        <div id="employees-panel" class="panel">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Employee</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="employee-form">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-input" id="emp-firstname" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-input" id="emp-lastname" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="emp-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Department</label>
+                                <input type="text" class="form-input" id="emp-department" placeholder="e.g., Sales, IT, HR">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Salary</label>
+                                <input type="number" class="form-input" id="emp-salary" placeholder="Annual salary">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width:100%;">Add Employee</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Employees</h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employees-table">
+                                <tr><td colspan="3" style="text-align:center;padding:40px;"><div class="loading"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bills Panel -->
+        <div id="bills-panel" class="panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Bill Images</h3>
+                    <span style="color:var(--text-muted);font-size:14px;">Max file size: 10MB | Storage: bill_images/</span>
+                </div>
+                <div class="card-body">
+                    <div id="bills-container" class="file-grid">
+                        <div style="grid-column:1/-1;" class="empty-state">
+                            <div class="loading"></div>
+                            <p style="margin-top:16px;">Loading bills...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:8000';
+        
+        function showPanel(name) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(name + '-panel').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (name === 'dashboard') loadDashboard();
+            if (name === 'expenses') loadExpenses();
+            if (name === 'users') loadUsers();
+            if (name === 'employees') loadEmployees();
+            if (name === 'bills') loadBills();
+        }
+        
+        async function loadDashboard() {
+            try {
+                const [statsRes, expensesRes] = await Promise.all([
+                    fetch(`${API_URL}/api/dashboard/summary`),
+                    fetch(`${API_URL}/api/expenses/`)
+                ]);
+                
+                const stats = await statsRes.json();
+                const expenses = await expensesRes.json();
+                
+                document.getElementById('total-expenses').textContent = stats.summary.total_expenses.toLocaleString();
+                document.getElementById('total-amount').textContent = '₹' + stats.summary.total_amount.toLocaleString('en-IN');
+                document.getElementById('pending-count').textContent = stats.summary.pending_count;
+                document.getElementById('pending-bills').textContent = stats.summary.pending_bills;
+                
+                const recentHtml = expenses.slice(0, 5).map(e => `
+                    <tr>
+                        <td>#${e.id}</td>
+                        <td>${e.description}</td>
+                        <td>₹${e.amount.toLocaleString('en-IN')}</td>
+                        <td><span class="badge badge-${e.status.toLowerCase().replace('_', '-')}">${e.status.replace('_', ' ')}</span></td>
+                        <td>${new Date(e.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('recent-activity').innerHTML = recentHtml || 
+                    '<tr><td colspan="5" class="empty-state"><span class="empty-state-icon">📋</span><p>No expenses yet</p></td></tr>';
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+        
+        async function loadExpenses(filter = 'all') {
+            try {
+                const res = await fetch(`${API_URL}/api/expenses/`);
+                let expenses = await res.json();
+                
+                if (filter !== 'all') {
+                    expenses = expenses.filter(e => e.status.toLowerCase() === filter);
+                }
+                
+                const html = expenses.map(e => `
+                    <tr>
+                        <td>#${e.id}</td>
+                        <td>${e.employee_name || 'Employee #' + e.employee_id}</td>
+                        <td>${e.description}</td>
+                        <td>₹${e.amount.toLocaleString('en-IN')}</td>
+                        <td><span class="badge badge-${e.status.toLowerCase().replace('_', '-')}">${e.status.replace('_', ' ')}</span></td>
+                        <td>
+                            ${e.status === 'PENDING' && e.bill_url ? `
+                                <button class="btn btn-success" onclick="approveExpense(${e.id})" style="margin-right:8px;">✓ Approve</button>
+                                <button class="btn btn-danger" onclick="rejectExpense(${e.id})">✗ Reject</button>
+                            ` : '<span style="color:var(--text-muted);">-</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('expenses-table').innerHTML = html || 
+                    '<tr><td colspan="6" class="empty-state"><span class="empty-state-icon">📋</span><p>No expenses found</p></td></tr>';
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+        
+        async function loadUsers() {
+            try {
+                const res = await fetch(`${API_URL}/api/auth/users`);
+                const users = await res.json();
+                
+                const html = users.map(u => `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td>
+                            <div style="font-weight:500;">${u.username}</div>
+                            <div style="font-size:12px;color:var(--text-muted);">${u.email}</div>
+                        </td>
+                        <td><span class="badge ${u.is_admin ? 'badge-admin' : 'badge-approved'}">${u.is_admin ? '👑 Admin' : '👤 User'}</span></td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('users-table').innerHTML = html || 
+                    '<tr><td colspan="3" class="empty-state"><span class="empty-state-icon">👥</span><p>No users yet</p></td></tr>';
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+        
+        async function loadEmployees() {
+            try {
+                const res = await fetch(`${API_URL}/api/employees/`);
+                const employees = await res.json();
+                
+                const html = employees.map(e => `
+                    <tr>
+                        <td>${e.id}</td>
+                        <td>
+                            <div style="font-weight:500;">${e.first_name} ${e.last_name}</div>
+                            <div style="font-size:12px;color:var(--text-muted);">${e.email}</div>
+                        </td>
+                        <td>${e.department || '-'}</td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('employees-table').innerHTML = html || 
+                    '<tr><td colspan="3" class="empty-state"><span class="empty-state-icon">🧑‍💼</span><p>No employees yet</p></td></tr>';
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+        
+        async function loadBills() {
+            try {
+                const res = await fetch(`${API_URL}/api/expenses/`);
+                const expenses = await res.json();
+                const withBills = expenses.filter(e => e.bill_url);
+                
+                const html = withBills.map(e => `
+                    <div class="file-card" onclick="window.open('${API_URL}${e.bill_url}', '_blank')">
+                        <div class="file-icon">📄</div>
+                        <p style="font-weight:600;margin-bottom:4px;">Expense #${e.id}</p>
+                        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">${e.description}</p>
+                        <span style="font-size:12px;color:var(--primary);font-weight:500;">View Bill →</span>
+                    </div>
+                `).join('');
+                
+                document.getElementById('bills-container').innerHTML = html || 
+                    '<div style="grid-column:1/-1;" class="empty-state"><span class="empty-state-icon">🧾</span><p>No bills uploaded yet</p></div>';
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+        
+        async function approveExpense(id) {
+            try {
+                await fetch(`${API_URL}/api/expenses/${id}/approve?approver_id=1`, { method: 'POST' });
+                loadExpenses();
+            } catch (e) {
+                alert('Error approving expense');
+            }
+        }
+        
+        async function rejectExpense(id) {
+            try {
+                await fetch(`${API_URL}/api/expenses/${id}/reject`, { method: 'POST' });
+                loadExpenses();
+            } catch (e) {
+                alert('Error rejecting expense');
+            }
+        }
+        
+        document.getElementById('user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                username: document.getElementById('user-username').value,
+                email: document.getElementById('user-email').value,
+                password: document.getElementById('user-password').value,
+                is_admin: document.getElementById('user-admin').checked
+            };
+            
+            try {
+                const res = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    alert('✅ User created successfully!');
+                    document.getElementById('user-form').reset();
+                    loadUsers();
+                } else {
+                    const err = await res.json();
+                    alert('❌ Error: ' + err.detail);
+                }
+            } catch (e) {
+                alert('Error creating user');
+            }
+        });
+        
+        document.getElementById('employee-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                first_name: document.getElementById('emp-firstname').value,
+                last_name: document.getElementById('emp-lastname').value,
+                email: document.getElementById('emp-email').value,
+                department: document.getElementById('emp-department').value,
+                salary: parseFloat(document.getElementById('emp-salary').value) || null
+            };
+            
+            try {
+                const res = await fetch(`${API_URL}/api/employees/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    alert('✅ Employee added successfully!');
+                    document.getElementById('employee-form').reset();
+                    loadEmployees();
+                } else {
+                    const err = await res.json();
+                    alert('❌ Error: ' + err.detail);
+                }
+            } catch (e) {
+                alert('Error adding employee');
+            }
+        });
+        
+        function filterExpenses(filter) {
+            loadExpenses(filter);
+        }
+        
+        // Initial load
+        loadDashboard();
+    </script>
+</body>
+</html>
