@@ -1,267 +1,480 @@
-# Employee Reimbursement Manager
+# ReimburseSys
 
-A complete Employee Expense Reimbursement Management System built with FastAPI (backend) and Next.js (frontend).
+<div align="center">
 
-## Project Overview
+**Enterprise Expense Reimbursement Management System**
 
-This system allows employees to submit expense reimbursement requests for business-related activities (meetings, conferences, travel, etc.). The reimbursement process follows these rules:
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://sqlite.org/)
 
-- **Expenses < ₹6000**: Auto-approved without bill requirement
-- **Expenses ≥ ₹6000**: Requires bill upload for manager approval
+</div>
 
-## Tech Stack
+---
 
-### Backend
-- **Framework**: FastAPI
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **Authentication**: Password hashing with bcrypt
-- **File Upload**: Support for PDF, JPG, JPEG, PNG
+## 📋 Table of Contents
 
-### Frontend
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Forms**: React Hook Form + Zod validation
-- **HTTP Client**: Axios
+- [Overview](#overview)
+- [System Architecture](#system-architecture)
+- [Quick Start](#quick-start)
+- [System Requirements](#system-requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Workflow Guide](#workflow-guide)
+- [API Reference](#api-reference)
+- [Upcoming Features](#upcoming-features)
+- [Troubleshooting](#troubleshooting)
 
-## Project Structure
+---
+
+## Overview
+
+**ReimburseSys** is a full-stack expense reimbursement platform designed for enterprise teams. It streamlines the process of submitting, reviewing, and approving employee expenses with an intelligent auto-approval system and bill verification workflow.
+
+### Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **Auto-Approval** | Expenses under ₹6,000 are automatically approved |
+| **Bill Verification** | Expenses ≥ ₹6,000 require receipt upload for approval |
+| **Real-time Dashboard** | Visual analytics and expense tracking |
+| **Role-based Access** | Separate views for employees and administrators |
+| **Mobile Responsive** | Dark-themed UI optimized for all devices |
+
+---
+
+## System Architecture
+
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│   Next.js 14    │────▶│   FastAPI        │────▶│    SQLite       │
+│   (Frontend)    │     │   (Backend)      │     │   (Database)    │
+│   Port: 3000    │◀────│   Port: 8000     │◀────│   File Storage  │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+         │                                               │
+         │          ┌─────────────────────┐               │
+         └─────────▶│   Bill Images       │◀─────────────┘
+                    │   (Local Storage)   │
+                    └─────────────────────┘
+```
+
+### Tech Stack
+
+| Layer | Technology | Version |
+|-------|------------|---------|
+| **Frontend** | Next.js + React + TypeScript | 14.2+ |
+| **Styling** | Tailwind CSS + Custom CSS | 3.3+ |
+| **Forms** | React Hook Form + Zod | 7.49+ |
+| **Backend** | FastAPI + Python | 3.10+ |
+| **Database** | SQLAlchemy + SQLite | 2.0+ |
+| **Auth** | Passlib (bcrypt) | 4.0.1 |
+
+---
+
+## Quick Start
+
+### One-Command Launch (Windows)
+
+```powershell
+# Double-click in File Explorer
+launch.bat
+```
+
+### Manual Start
+
+```powershell
+# Terminal 1 - Backend
+cd backend
+.\venv\Scripts\activate
+uvicorn main:app --reload
+
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
+```
+
+Access the application:
+- **Frontend**: http://localhost:3000
+- **API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+
+---
+
+## System Requirements
+
+### Software
+
+| Software | Minimum Version | Download |
+|----------|----------------|----------|
+| Python | 3.10+ | [python.org](https://python.org) |
+| Node.js | 18+ | [nodejs.org](https://nodejs.org) |
+| Git | 2.30+ | [git-scm.com](https://git-scm.com) |
+
+### Hardware
+
+| Resource | Minimum | Recommended |
+|----------|---------|-------------|
+| RAM | 4 GB | 8 GB |
+| Storage | 500 MB | 2 GB |
+| CPU | Dual-core | Quad-core |
+
+### Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+---
+
+## Installation
+
+### 1. Clone Repository
+
+```powershell
+git clone <repository-url>
+cd Employee-Reimbursement-Manager
+```
+
+### 2. Backend Setup
+
+```powershell
+cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate (Windows)
+.\venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+**Dependencies (`requirements.txt`)**:
+```
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.0
+bcrypt==4.0.1
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+pydantic[email]>=2.5.0
+python-multipart>=0.0.6
+```
+
+### 3. Frontend Setup
+
+```powershell
+cd frontend
+npm install
+```
+
+**Key Dependencies**:
+```json
+{
+  "next": "^14.2.35",
+  "react": "18.2.0",
+  "typescript": "5.3.3",
+  "tailwindcss": "^3.3.0",
+  "axios": "^1.15.2",
+  "react-hook-form": "7.49.1",
+  "zod": "3.22.4",
+  "lucide-react": "^1.11.0"
+}
+```
+
+### 4. Seed Test Data (Optional)
+
+```powershell
+cd backend
+python seed_data.py
+```
+
+Creates 10 employees + 1 admin with credentials:
+- **Regular Users**: `john.smith@company.com` / `password123` (IDs 1-10)
+- **Admin**: `admin@company.com` / `admin123`
+
+---
+
+## Configuration
+
+### Environment Variables
+
+Create `backend/.env`:
+
+```env
+# Database (SQLite default - no setup required)
+DATABASE_URL=sqlite:///./reimbursement.db
+
+# For PostgreSQL (optional):
+# DATABASE_URL=postgresql://user:password@localhost:5432/reimbursement_db
+
+# File Storage
+UPLOAD_DIR=./bill_images
+MAX_FILE_SIZE=10485760
+
+# Server
+HOST=0.0.0.0
+PORT=8000
+```
+
+### File Upload Settings
+
+| Setting | Value | Description |
+|---------|-------|-------------|
+| Max File Size | 10 MB | Per receipt upload |
+| Allowed Types | PDF, JPG, JPEG, PNG | Bill formats |
+| Storage Path | `backend/bill_images/` | Local storage |
+| Naming Pattern | `expense_{id}_{timestamp}.{ext}` | Auto-generated |
+
+---
+
+## Workflow Guide
+
+### Employee Workflow
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Login     │───▶│ Submit      │───▶│   Upload    │───▶│   Track     │
+│             │    │ Expense     │    │   Bill      │    │   Status    │
+└─────────────┘    │ (if ≥₹6000) │    │  (if ≥₹6000)│    └─────────────┘
+                   └─────────────┘    └─────────────┘
+```
+
+**Steps**:
+1. **Login** → Use employee credentials
+2. **Submit Expense** → Enter amount, category, description
+3. **Upload Bill** → Required for expenses ≥ ₹6,000
+4. **Track Status** → View real-time approval status
+
+### Admin Workflow
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Login     │───▶│  Review     │───▶│ Approve/    │
+│             │    │  Pending    │    │ Reject      │
+└─────────────┘    └─────────────┘    └─────────────┘
+```
+
+**Steps**:
+1. **Login** → Use admin credentials
+2. **Review Dashboard** → See pending approvals and statistics
+3. **View Expenses** → Filter by status, category, employee
+4. **Take Action** → Approve or reject with bill verification
+
+### Reimbursement Rules
+
+| Expense Amount | Bill Required | Approval Type | Status |
+|---------------|---------------|---------------|--------|
+| < ₹6,000 | No | Automatic | `AUTO_APPROVED` |
+| ≥ ₹6,000 | Yes | Manual | `PENDING` → `APPROVED` |
+| Any | - | Manager Decision | `REJECTED` |
+
+---
+
+## API Reference
+
+### Authentication
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Create user account |
+| POST | `/api/auth/login` | Authenticate user |
+| GET | `/api/auth/me` | Get current user |
+
+### Employees
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/employees/` | List all employees |
+| POST | `/api/employees/` | Create employee |
+| GET | `/api/employees/{id}` | Get employee details |
+| PUT | `/api/employees/{id}` | Update employee |
+| DELETE | `/api/employees/{id}` | Deactivate employee |
+
+### Expenses
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/expenses/` | List all expenses |
+| POST | `/api/expenses/` | Submit expense |
+| GET | `/api/expenses/pending` | Get pending list |
+| POST | `/api/expenses/{id}/upload-bill` | Upload receipt |
+| POST | `/api/expenses/{id}/approve` | Approve expense |
+| POST | `/api/expenses/{id}/reject` | Reject expense |
+
+### Dashboard
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dashboard/summary` | Statistics summary |
+| GET | `/api/dashboard/recent` | Recent activity |
+
+---
+
+## Upcoming Features
+
+Based on user feedback and enterprise needs, the following features are planned:
+
+### Priority 1: Employee Experience
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Email Notifications** | Automated emails for approval/rejection updates | 🚧 Planned |
+| **Expense History** | Personal dashboard with filtering and search | 🚧 Planned |
+| **Mobile Receipt Capture** | Direct camera integration for bill photos | 📋 Backlog |
+
+### Priority 2: Admin Tools
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Bulk Actions** | Approve/reject multiple expenses at once | 🚧 Planned |
+| **Export Reports** | Excel/PDF export for accounting | 🚧 Planned |
+| **Analytics Charts** | Visual spending breakdowns by category/month | 🚧 Planned |
+| **Department Managers** | Assign managers to specific departments | 📋 Backlog |
+
+### Priority 3: System Enhancements
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Multi-currency** | Support for USD, EUR, GBP, etc. | 📋 Backlog |
+| **OCR Receipt Scan** | Auto-extract data from receipt images | 📋 Backlog |
+| **Accounting Integration** | QuickBooks, SAP, Tally connectors | 📋 Backlog |
+| **Role-based Access** | Granular permissions (viewer, reviewer, admin) | 📋 Backlog |
+
+### Community Suggestions
+
+- [ ] Reimbursement payment tracking
+- [ ] Recurring expense templates
+- [ ] Policy compliance checker
+- [ ] Expense forecasting
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**1. Database Connection Error**
+```
+Error: sqlite3.OperationalError: unable to open database file
+```
+**Solution**: Ensure `backend/` directory has write permissions.
+
+**2. Port Already in Use**
+```
+Error: [Errno 98] Address already in use
+```
+**Solution**: 
+```powershell
+# Kill process on port 8000 (Windows)
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+```
+
+**3. bcrypt Version Error**
+```
+Error: password cannot be longer than 72 bytes
+```
+**Solution**: Ensure bcrypt==4.0.1 is installed:
+```powershell
+pip install bcrypt==4.0.1
+```
+
+**4. Frontend Not Loading Dark Theme**
+```
+Symptom: White background instead of dark
+```
+**Solution**: Clear Next.js cache:
+```powershell
+cd frontend
+Remove-Item -Recurse -Force .next
+npm run build
+```
+
+### Getting Help
+
+- **API Issues**: Check `http://localhost:8000/docs`
+- **Frontend Errors**: Check browser DevTools console
+- **Database**: Inspect `backend/reimbursement.db` with SQLite browser
+
+---
+
+## Development
+
+### Project Structure
 
 ```
 Employee-Reimbursement-Manager/
 ├── backend/
-│   ├── main.py                 # FastAPI application entry point
-│   ├── models.py               # SQLAlchemy database models
-│   ├── .env                    # Environment variables
-│   ├── requirements.txt        # Python dependencies
-│   └── routes/
-│       ├── __init__.py
-│       ├── auth.py             # Authentication routes
-│       ├── employee.py         # Employee management routes
-│       ├── expense.py          # Expense/reimbursement routes
-│       └── dashboard.py        # Dashboard statistics routes
+│   ├── main.py              # FastAPI entry point
+│   ├── models.py            # Database models
+│   ├── routes/
+│   │   ├── auth.py          # Authentication
+│   │   ├── employee.py      # Employee management
+│   │   ├── expense.py       # Expense workflows
+│   │   └── dashboard.py     # Analytics
+│   ├── seed_data.py         # Test data generator
+│   └── requirements.txt     # Python deps
 ├── frontend/
 │   ├── src/app/
-│   │   ├── page.tsx           # Main application page
-│   │   ├── layout.tsx         # Root layout
-│   │   └── globals.css        # Global styles
-│   ├── package.json           # Node.js dependencies
-│   ├── tsconfig.json          # TypeScript configuration
-│   └── next.config.js         # Next.js configuration
-└── README.md                  # This file
+│   │   ├── page.tsx         # Main dashboard
+│   │   ├── layout.tsx       # Root layout
+│   │   └── globals.css      # Dark theme styles
+│   ├── package.json         # Node deps
+│   └── tailwind.config.js   # Tailwind setup
+├── launch.bat               # One-click launcher
+├── push-to-github.bat       # Git push helper
+└── README.md                # This file
 ```
 
-## Database Schema
+### Database Schema
 
-### Tables
-1. **users** - Admin/manager accounts
-2. **employees** - Employee information
-3. **expenses** - Reimbursement requests with status tracking
-4. **notifications** - System notifications
+```
+users
+├── id (PK)
+├── username
+├── email
+├── password (bcrypt hashed)
+├── is_admin
+└── is_active
 
-### Expense Status Flow
-- `PENDING` → Requires bill upload + manager approval (for ≥ ₹6000)
-- `AUTO_APPROVED` → Automatic approval (< ₹6000)
-- `APPROVED` → Manager approved
-- `REJECTED` → Manager rejected
+employees
+├── id (PK)
+├── first_name
+├── last_name
+├── email
+├── salary
+├── department
+└── is_active
 
-## Setup Instructions
-
-### Prerequisites
-- Python 3.10+
-- PostgreSQL 14+
-- Node.js 18+
-
-### Backend Setup
-
-1. **Navigate to backend directory:**
-   ```bash
-   cd Employee-Reimbursement-Manager/backend
-   ```
-
-2. **Create virtual environment:**
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate  # Windows
-   source venv/bin/activate  # Linux/Mac
-   ```
-
-3. **Install Python dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure PostgreSQL database:**
-   - Create a database named `reimbursement_db`
-   - Update `.env` file with your database credentials
-
-5. **Run the backend server:**
-   ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-   The API will be available at `http://localhost:8000`
-
-### Frontend Setup
-
-1. **Navigate to frontend directory:**
-   ```bash
-   cd Employee-Reimbursement-Manager/frontend
-   ```
-
-2. **Install Node.js dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-
-   The frontend will be available at `http://localhost:3000`
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user info
-
-### Employees
-- `GET /api/employees/` - List all employees
-- `POST /api/employees/` - Create new employee
-- `GET /api/employees/{id}` - Get employee details
-- `PUT /api/employees/{id}` - Update employee
-- `DELETE /api/employees/{id}` - Deactivate employee
-- `GET /api/employees/{id}/stats` - Get employee expense statistics
-
-### Expenses
-- `GET /api/expenses/` - List all expenses
-- `POST /api/expenses/` - Submit new expense
-- `GET /api/expenses/pending` - Get pending expenses
-- `GET /api/expenses/{id}` - Get expense details
-- `POST /api/expenses/{id}/upload-bill` - Upload bill for expense
-- `POST /api/expenses/{id}/approve` - Approve expense
-- `POST /api/expenses/{id}/reject` - Reject expense
-- `GET /api/expenses/stats/summary` - Get expense statistics
-
-### Dashboard
-- `GET /api/dashboard/summary` - Get dashboard summary
-- `GET /api/dashboard/recent-activity` - Get recent expenses
-- `GET /api/dashboard/expenses-by-category` - Get category breakdown
-- `GET /api/dashboard/monthly-report` - Get monthly report
-- `GET /api/dashboard/top-employees` - Get top spending employees
-- `GET /api/dashboard/pending-approvals` - Get pending approvals
-
-## Usage Guide
-
-### 1. Create an Admin/User
-First, register a user account:
-```bash
-curl -X POST "http://localhost:8000/api/auth/register" \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "email": "admin@company.com", "password": "password123", "is_admin": true}'
+expenses
+├── id (PK)
+├── amount
+├── description
+├── category (FOOD, TRAVEL, etc.)
+├── status (PENDING, APPROVED, etc.)
+├── bill_url
+├── requires_bill
+├── employee_id (FK)
+└── created_by (FK)
 ```
 
-### 2. Create an Employee
-```bash
-curl -X POST "http://localhost:8000/api/employees/" \
-  -H "Content-Type: application/json" \
-  -d '{"first_name": "John", "last_name": "Doe", "email": "john@company.com", "department": "Sales"}'
-```
-
-### 3. Submit an Expense
-#### Auto-approved (under ₹6000):
-```bash
-curl -X POST "http://localhost:8000/api/expenses/" \
-  -F "description=Business lunch" \
-  -F "amount=2500" \
-  -F "category=FOOD" \
-  -F "expense_date=2024-01-15" \
-  -F "employee_id=1" \
-  -F "created_by=1"
-```
-
-#### Pending approval (₹6000+):
-```bash
-curl -X POST "http://localhost:8000/api/expenses/" \
-  -F "description=Conference travel" \
-  -F "amount=8000" \
-  -F "category=TRAVEL" \
-  -F "expense_date=2024-01-15" \
-  -F "employee_id=1" \
-  -F "created_by=1"
-```
-
-### 4. Upload Bill for Large Expense
-```bash
-curl -X POST "http://localhost:8000/api/expenses/2/upload-bill" \
-  -F "bill=@/path/to/receipt.pdf"
-```
-
-### 5. Approve/Reject Expense
-```bash
-# Approve
-curl -X POST "http://localhost:8000/api/expenses/2/approve?approver_id=1"
-
-# Reject
-curl -X POST "http://localhost:8000/api/expenses/2/reject"
-```
-
-## File Upload Configuration
-
-- **Allowed Formats**: PDF, JPG, JPEG, PNG
-- **Storage Location**: `backend/uploads/bills/`
-- **File Naming**: `expense_{id}_{timestamp}.{ext}`
-
-## Key Features
-
-1. **Automatic Approval**: Expenses under ₹6000 are auto-approved
-2. **Bill Management**: Upload bills for expenses ≥ ₹6000
-3. **Dashboard**: Visual overview of expenses and statistics
-4. **Category Tracking**: Categorize expenses (Food, Travel, Meetings, etc.)
-5. **Employee Management**: Add and manage employee records
-6. **Expense History**: View all expenses with filtering options
-7. **Approval Workflow**: Manager approval for high-value expenses
-
-## Troubleshooting
-
-### Database Connection Error
-Ensure PostgreSQL is running and `.env` has correct credentials:
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/reimbursement_db?schema=public"
-```
-
-### Port Already in Use
-- Backend: Change `PORT` in `.env`
-- Frontend: Use `npm run dev -- -p 3001` to use different port
-
-### Import Errors
-Ensure virtual environment is activated and dependencies are installed:
-```bash
-pip install -r requirements.txt
-```
-
-## Development
-
-### Running Tests
-```bash
-# Backend tests (if available)
-cd backend
-pytest
-
-# Frontend linting
-cd frontend
-npm run lint
-```
-
-### Database Migrations
-Since the system uses SQLAlchemy with `create_all()`, tables are created automatically. For production, consider using Alembic for migrations.
+---
 
 ## License
 
-This project is for educational purposes.
+This project is developed for educational and enterprise use.
 
-## Support
+---
 
-For issues or questions, please refer to the code documentation or create an issue in the repository.
+<div align="center">
+
+**Built with modern web technologies**
+
+[⬆ Back to Top](#reimbursesys)
+
+</div>
