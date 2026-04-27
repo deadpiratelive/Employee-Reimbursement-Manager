@@ -14,8 +14,7 @@ const expenseSchema = z.object({
   category: z.enum(["FOOD", "TRANSPORTATION", "OFFICE_SUPPLIES", "MEETINGS", "CONFERENCES", "TRAVEL", "OTHER"]),
   expense_date: z.string().min(1, "Date is required"),
   employee_id: z.number().int().positive("Employee ID is required"),
-  created_by: z.number().int().positive("User ID is required"),
-});
+  });
 
 type ExpenseFormData = z.infer<typeof expenseSchema>;
 
@@ -26,6 +25,7 @@ interface Expense {
   category: string;
   status: string;
   employee_name?: string;
+  employee_id: number;
   created_at: string;
   requires_bill: boolean;
   bill_url?: string;
@@ -66,7 +66,6 @@ export default function Home() {
     defaultValues: {
       expense_date: new Date().toISOString().split('T')[0],
       employee_id: 1,
-      created_by: 1,
     }
   });
 
@@ -100,13 +99,16 @@ export default function Home() {
   const onSubmit = async (data: ExpenseFormData) => {
     setLoading(true);
     try {
+      // Get user ID from localStorage (set during login) or default to 1
+      const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') || '1' : '1';
+      
       const formData = new FormData();
       formData.append("description", data.description);
       formData.append("amount", data.amount.toString());
       formData.append("category", data.category);
       formData.append("expense_date", data.expense_date);
       formData.append("employee_id", data.employee_id.toString());
-      formData.append("created_by", data.created_by.toString());
+      formData.append("created_by", userId);
 
       await axios.post(`${API_BASE_URL}/api/expenses/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -131,11 +133,19 @@ export default function Home() {
     setSelectedExpense(expense);
     setSelectedFile(null);
     setUploadModalOpen(true);
+    // Auto-trigger file picker after modal opens
+    setTimeout(() => {
+      const fileInput = document.getElementById('bill-upload') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.click();
+      }
+    }, 100);
   };
 
   const uploadBill = async () => {
     if (!selectedFile || !selectedExpense) return;
-    
+
+    setLoading(true);
     const formData = new FormData();
     formData.append("bill", selectedFile);
 
@@ -152,6 +162,8 @@ export default function Home() {
       fetchData();
     } catch (error: any) {
       showNotification(error.response?.data?.detail || "Failed to upload bill", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -233,11 +245,11 @@ export default function Home() {
                 >
                   <span>{tab.icon}</span>
                   <span className="hidden sm:inline">{tab.label}</span>
-                  {tab.badge > 0 && (
-                    <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                      {tab.badge}
-                    </span>
-                  )}
+              {tab.badge && tab.badge > 0 && (
+                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                  {tab.badge}
+                </span>
+              )}
                 </button>
               ))}
             </nav>
@@ -501,12 +513,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Created By (User ID)</label>
-                  <input type="number" {...register("created_by", { valueAsNumber: true })} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="Enter user ID" />
-                </div>
-
-                <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold text-lg hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all">
+            <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold text-lg hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all">
                   {loading ? "⏳ Submitting..." : "✨ Submit Expense"}
                 </button>
               </form>
