@@ -16,6 +16,7 @@ router = APIRouter()
 
 # Constants
 AUTO_APPROVE_THRESHOLD = 6000.0
+MAX_EXPENSE_AMOUNT = 100000.0
 BILL_UPLOAD_DIR = Path("bill_images")
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
@@ -189,11 +190,11 @@ def create_expense(
             detail="User not found"
         )
     
-    # Validate amount cap
-    if amount > AUTO_APPROVE_THRESHOLD:
+    # Validate amount cap (max 1 lakh INR)
+    if amount > MAX_EXPENSE_AMOUNT:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Maximum expense amount is {AUTO_APPROVE_THRESHOLD} INR"
+            detail=f"Maximum expense amount is {MAX_EXPENSE_AMOUNT} INR"
         )
     
     # Validate category

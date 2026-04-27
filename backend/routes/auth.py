@@ -57,15 +57,17 @@ class TokenResponse(BaseModel):
 # Helper functions
 def hash_password(password: str) -> str:
     """Hash password with bcrypt, handling long passwords"""
-    # bcrypt has a 72 byte limit
-    password_bytes = password.encode('utf-8')
-    if len(password_bytes) > MAX_PASSWORD_LENGTH:
-        password_bytes = password_bytes[:MAX_PASSWORD_LENGTH]
-    return pwd_context.hash(password_bytes)
+    # bcrypt has a 72 byte limit - truncate password string if needed
+    if len(password) > MAX_PASSWORD_LENGTH:
+        password = password[:MAX_PASSWORD_LENGTH]
+    return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify password against hash"""
     try:
+        # bcrypt has a 72 byte limit - truncate if necessary
+        if len(plain_password) > MAX_PASSWORD_LENGTH:
+            plain_password = plain_password[:MAX_PASSWORD_LENGTH]
         return pwd_context.verify(plain_password, hashed_password)
     except Exception:
         return False
