@@ -1,8 +1,10 @@
-# Render.com Configuration for Employee Reimbursement Manager Backend
+# Render.com Configuration
+# Service Name: reimbursesys
+# URL: https://reimbursesys.onrender.com
 
 services:
   - type: web
-    name: employee-reimbursement-api
+    name: reimbursesys
     runtime: python
     pythonVersion: 3.11
     buildCommand: pip install -r requirements.txt
@@ -12,9 +14,8 @@ services:
         value: 3.11.0
       - key: DATABASE_URL
         value: sqlite:///./reimbursement.db
-        # For PostgreSQL, use: postgresql://user:pass@host:5432/dbname
       - key: CORS_ORIGINS
-        value: "*"
+        value: "https://reimbursesys.netlify.app,http://localhost:3000"
     disk:
       name: bill-images
       mountPath: /opt/render/project/src/bill_images
