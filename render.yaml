@@ -1,4 +1,4 @@
-# Render.com Configuration
+# Render.com Blueprint
 # Service Name: reimbursesys
 # URL: https://reimbursesys.onrender.com
 
@@ -6,12 +6,9 @@ services:
   - type: web
     name: reimbursesys
     runtime: python
-    pythonVersion: 3.11
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
       - key: DATABASE_URL
         value: sqlite:///./reimbursement.db
       - key: CORS_ORIGINS
