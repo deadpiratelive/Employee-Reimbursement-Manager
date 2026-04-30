@@ -1,8 +1,10 @@
 # Fly.io Configuration for Employee Reimbursement Manager Backend
 # Service Name: reimbursesys
 # URL: https://reimbursesys.fly.dev
+# Region: Mumbai, India (bom)
 
 app = "reimbursesys"
+primary_region = "bom"
 
 [build]
   builder = "paketobuild/paketobuilder:latest"
