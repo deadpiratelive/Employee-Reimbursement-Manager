@@ -6,9 +6,6 @@
 app = "reimbursesys"
 primary_region = "bom"
 
-[build]
-  builder = "paketobuild/paketobuilder:latest"
-
 [env]
   DATABASE_URL = "sqlite:///./reimbursement.db"
   CORS_ORIGINS = "https://reimbursesys.netlify.app,http://localhost:3000"
