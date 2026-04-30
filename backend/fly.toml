@@ -1,0 +1,31 @@
+# Fly.io Configuration for Employee Reimbursement Manager Backend
+# Service Name: reimbursesys
+# URL: https://reimbursesys.fly.dev
+
+app = "reimbursesys"
+primary_region = "iad"
+
+[build]
+  builder = "paketobuild/paketobuilder:latest"
+
+[env]
+  DATABASE_URL = "sqlite:///./reimbursement.db"
+  CORS_ORIGINS = "https://reimbursesys.netlify.app,http://localhost:3000"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[http_service.checks]]
+  interval = 10000
+  timeout = 5000
+  grace_period = 5
+  method = "GET"
+  path = "/health"
+
+[[mounts]]
+  source = "bill_images"
+  destination = "/app/bill_images"

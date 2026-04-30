@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NEXT_PUBLIC_API_URL = "https://reimbursesys.onrender.com"
+  NEXT_PUBLIC_API_URL = "https://reimbursesys.fly.dev"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -12,7 +12,7 @@
 # Redirect rules
 [[redirects]]
   from = "/api/*"
-  to = "https://reimbursesys.onrender.com/api/:splat"
+  to = "https://reimbursesys.fly.dev/api/:splat"
   status = 200
 
 # Handle client-side routing
