@@ -3,7 +3,6 @@
 # URL: https://reimbursesys.fly.dev
 
 app = "reimbursesys"
-primary_region = "iad"
 
 [build]
   builder = "paketobuild/paketobuilder:latest"
